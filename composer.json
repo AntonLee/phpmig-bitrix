@@ -1,0 +1,21 @@
+{
+    "name": "antonlee/phpmig-bitrix",
+    "description": "phpmig adapter for Bitrix framework",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Anton Lee",
+            "email": "antonlee0@gmail.com"
+        }
+    ],
+    "require": {},
+    "suggest": {
+        "davedevelopment/phpmig": "Gun for this bullet."
+    },
+    "autoload": {
+        "psr-4": {
+            "AntonLee\\Phpmig\\": "src/"
+        }
+    },
+    "bin": ["bin/phpmig-bitrix"]
+}

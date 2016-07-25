@@ -1,0 +1,44 @@
+#!/usr/bin/env php
+<?php
+
+$contents = <<<PHP
+<?php
+
+define('NO_KEEP_STATISTIC', true);
+define('NOT_CHECK_PERMISSIONS', true);
+define('BX_NO_ACCELERATOR_RESET', true);
+define('NO_AGENT_CHECK', true);
+
+\$_SERVER['DOCUMENT_ROOT'] = dirname(__DIR__);
+
+require_once \$_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/include/prolog_before.php';
+
+use Bitrix\Main\Application;
+use AntonLee\Phpmig\BitrixDbAdapter;
+
+\$container = new ArrayObject();
+\$container['phpmig.adapter'] = new BitrixDbAdapter(Application::getInstance()->getConnection(), 'migrations');
+\$container['phpmig.migrations_path'] = __DIR__.DIRECTORY_SEPARATOR.'migrations';
+
+// You can also provide an array of migration files
+// \$container['phpmig.migrations'] = array_merge(
+//     glob('migrations_1/*.php'),
+//     glob('migrations_2/*.php')
+// );
+
+return \$container;
+
+PHP;
+
+$cwd = getcwd();
+if (false === $cwd) {
+    die('Error. Can\'t get current working directory.');
+}
+if (!file_exists($cwd.DIRECTORY_SEPARATOR.'migrations')) {
+    mkdir($cwd.DIRECTORY_SEPARATOR.'migrations', 0755, true);
+}
+
+if (!file_exists($cwd.DIRECTORY_SEPARATOR.'phpmig.php')) {
+    file_put_contents($cwd.DIRECTORY_SEPARATOR.'phpmig.php', $contents);
+}
+echo "done. Have fun!\n";
