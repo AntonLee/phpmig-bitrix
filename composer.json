@@ -8,6 +8,12 @@
             "email": "antonlee0@gmail.com"
         }
     ],
+    "keywords": [
+        "migrations",
+        "database",
+        "database migrations",
+        "Bitrix"
+    ],
     "require": {
         "davedevelopment/phpmig": "*"
     },
