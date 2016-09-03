@@ -8,9 +8,8 @@
             "email": "antonlee0@gmail.com"
         }
     ],
-    "require": {},
-    "suggest": {
-        "davedevelopment/phpmig": "Gun for this bullet."
+    "require": {
+        "davedevelopment/phpmig": "*"
     },
     "autoload": {
         "psr-4": {
