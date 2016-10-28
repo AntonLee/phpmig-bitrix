@@ -34,11 +34,11 @@ class BitrixDbAdapter implements AdapterInterface
      */
     public function __construct(Connection $connection, $tableName)
     {
-        $this->db   = $connection;
+        $this->db = $connection;
         $this->helper = $connection->getSqlHelper();
         $this->tableName = $tableName;
     }
-    
+
     /**
      * Get all migrated version numbers
      *
@@ -47,9 +47,13 @@ class BitrixDbAdapter implements AdapterInterface
     public function fetchAll()
     {
         $helper = $this->helper;
-        $dbResult = $this->db->query(sprintf(
-            'SELECT %s FROM %s ORDER BY %1$s ASC',
-            $helper->quote('version'), $helper->quote($this->tableName)));
+        $dbResult = $this->db->query(
+            sprintf(
+                'SELECT %s FROM %s ORDER BY %1$s ASC',
+                $helper->quote('version'),
+                $helper->quote($this->tableName)
+            )
+        );
         $versions = array();
         while ($row = $dbResult->fetch()) {
             $versions[] = $row['version'];
@@ -62,11 +66,22 @@ class BitrixDbAdapter implements AdapterInterface
      * Up
      *
      * @param Migration $migration
+     *
      * @return AdapterInterface
      */
     public function up(Migration $migration)
     {
-        $this->db->add($this->tableName, array('version' => $migration->getVersion(), 'name' => $migration->getName()), null);
+        $helper = $this->helper;
+        $this->db->queryExecute(
+            sprintf(
+                'INSERT INTO %s (%s, %s) VALUES (\'%s\', \'%s\')',
+                $helper->quote($this->tableName),
+                $helper->quote('version'),
+                $helper->quote('name'),
+                $helper->forSql($migration->getVersion()),
+                $helper->forSql($migration->getName())
+            )
+        );
         return $this;
     }
 
@@ -74,15 +89,20 @@ class BitrixDbAdapter implements AdapterInterface
      * Down
      *
      * @param Migration $migration
+     *
      * @return AdapterInterface
      */
     public function down(Migration $migration)
     {
         $helper = $this->helper;
-        $this->db->queryExecute(sprintf(
-            'DELETE FROM %s WHERE %s = \'%s\'',
-            $helper->quote($this->tableName), $helper->quote('version'), $helper->forSql($migration->getVersion())
-        ));
+        $this->db->queryExecute(
+            sprintf(
+                'DELETE FROM %s WHERE %s = \'%s\'',
+                $helper->quote($this->tableName),
+                $helper->quote('version'),
+                $helper->forSql($migration->getVersion())
+            )
+        );
 
         return $this;
     }
@@ -104,7 +124,13 @@ class BitrixDbAdapter implements AdapterInterface
      */
     public function createSchema()
     {
-        $this->db->createTable($this->tableName, array(new StringField('version'), new StringField('name')));
+        $this->db->createTable(
+            $this->tableName,
+            array(
+                'version' => new StringField('version'),
+                'name' => new StringField('name'),
+            )
+        );
         return $this;
     }
 }
